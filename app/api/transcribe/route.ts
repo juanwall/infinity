@@ -1,12 +1,23 @@
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
+import { createClient } from '@/utils/api';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req: Request) {
+  const supabase = await createClient();
+
   try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const formData = await req.formData();
     const audioFile = formData.get('audio') as File;
 
@@ -22,10 +33,11 @@ export async function POST(req: Request) {
       model: 'whisper-1',
     });
 
+    console.log('Transcription:', transcription.text);
+
     return NextResponse.json({ text: transcription.text });
   } catch (error) {
     console.error('Transcription error:', error);
-
     return NextResponse.json(
       { error: 'Error processing audio' },
       { status: 500 },

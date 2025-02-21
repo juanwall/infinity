@@ -96,10 +96,12 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-center gap-4">
-        <button
-          onClick={isRecording ? stopRecording : startRecording}
-          className={`
+      {!currentItem && (
+        <>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={isRecording ? stopRecording : startRecording}
+              className={`
             px-6 py-3 rounded-full font-medium text-white
             transition-all duration-200 transform hover:scale-105
             flex items-center gap-2
@@ -109,47 +111,55 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
                 : 'bg-blue-500 hover:bg-blue-600'
             }
           `}
-        >
-          {isRecording ? (
-            <>
-              <StopIcon className="w-5 h-5" />
-              Stop Recording
-            </>
-          ) : (
-            <>
-              <MicrophoneIcon className="w-5 h-5" />
-              Start Recording
-            </>
-          )}
-        </button>
+            >
+              {isRecording ? (
+                <>
+                  <StopIcon className="w-5 h-5" />
+                  Stop Recording
+                </>
+              ) : (
+                <>
+                  <MicrophoneIcon className="w-5 h-5" />
+                  Start Recording
+                </>
+              )}
+            </button>
 
-        {audioUrl && (
-          <button
-            onClick={onReset}
-            className="px-4 py-2 rounded-full text-gray-600 hover:text-gray-800 
+            {audioUrl && (
+              <button
+                onClick={onReset}
+                className="px-4 py-2 rounded-full text-gray-600 hover:text-gray-800 
               dark:text-gray-300 dark:hover:text-white
               transition-colors duration-200"
-          >
-            Reset
-          </button>
-        )}
-      </div>
+              >
+                Reset
+              </button>
+            )}
+          </div>
 
-      {!isRecording && !isProcessing && (
-        <div className="text-center text-gray-600 dark:text-gray-300 text-sm">
-          Tell Infinity what your SO wants to buy. Say something like "Macbook
-          Pro."
-        </div>
-      )}
+          {!isRecording && !isProcessing && (
+            <>
+              <div className="text-center text-gray-600 dark:text-gray-300 text-sm">
+                Tell Infinity what your SO wants to buy. Say something like
+                "Macbook Pro."
+              </div>
+              <div className="text-center text-gray-600 dark:text-gray-300 text-xs">
+                <span className="italic mr-0.5">Or have your SO say it.</span>{' '}
+                😄
+              </div>
+            </>
+          )}
 
-      {audioUrl && (
-        <div className="flex justify-center">
-          <audio
-            src={audioUrl}
-            controls
-            className="w-full max-w-md rounded-lg shadow"
-          />
-        </div>
+          {audioUrl && (
+            <div className="flex justify-center">
+              <audio
+                src={audioUrl}
+                controls
+                className="w-full max-w-md rounded-lg shadow"
+              />
+            </div>
+          )}
+        </>
       )}
 
       {isProcessing && (

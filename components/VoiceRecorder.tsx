@@ -21,6 +21,7 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const recordingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const startRecording = async () => {
     try {
@@ -61,12 +62,23 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
 
       mediaRecorderRef.current.start();
       setIsRecording(true);
+
+      // Set a timeout to stop recording after 30 seconds
+      recordingTimeoutRef.current = setTimeout(() => {
+        stopRecording();
+      }, 10000); // 10 seconds
     } catch (err) {
       console.error('Error accessing microphone:', err);
     }
   };
 
   const stopRecording = () => {
+    // Clear the timeout if stopping manually
+    if (recordingTimeoutRef.current) {
+      clearTimeout(recordingTimeoutRef.current);
+      recordingTimeoutRef.current = null;
+    }
+
     if (
       mediaRecorderRef.current &&
       mediaRecorderRef.current.state === 'recording'

@@ -1,11 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
+
 import VoiceRecorder from '@/components/VoiceRecorder';
 import SpreadsheetView from '@/components/SpreadsheetView';
 import { useAuth } from '@/components/AuthProvider';
 import AuthForm from '@/components/AuthForm';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Quicksand } from 'next/font/google';
+
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+});
 
 // Define an interface for the shopping items
 interface ShoppingItem {
@@ -84,15 +91,19 @@ export default function Home() {
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh]">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          Infinity
-        </h1>
-        <h2 className="text-md text-gray-600 dark:text-gray-300 mb-12">
-          Cataloging your significant other's path to broke and fabulous!
+        <h2
+          className={`${quicksand.className} text-xl md:text-2xl text-center font-semibold mb-10`}
+        >
+          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient">
+            Cataloging your significant other&apos;s path
+            <br /> to Broke
+          </span>
+          {' 🤑 '}
+          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient">
+            and Fabulous!
+          </span>
+          {' 💎🛍️'}
         </h2>
-        {/* <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-          Please sign {isSignUp ? 'up' : 'in'} to continue
-        </p> */}
         <AuthForm isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
       </div>
     );
@@ -100,23 +111,6 @@ export default function Home() {
 
   return (
     <div className="space-y-8">
-      <header className="text-center">
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={() => signOut()}
-            className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
-          >
-            Sign out
-          </button>
-        </div>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          Infinity
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300">
-          Cataloging your significant other's path to broke and fabulous!
-        </p>
-      </header>
-
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
         <VoiceRecorder onItemConfirmed={addItem} />
       </div>

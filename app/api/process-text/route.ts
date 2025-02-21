@@ -20,6 +20,10 @@ export async function POST(req: Request) {
 
     const { text } = await req.json();
 
+    if (!text) {
+      return NextResponse.json({ error: 'No text provided' }, { status: 400 });
+    }
+
     const completion = await openai.chat.completions.create({
       model: 'o3-mini',
       messages: [
@@ -30,7 +34,7 @@ export async function POST(req: Request) {
         },
         {
           role: 'user',
-          content: text,
+          content: text.slice(0, 200),
         },
       ],
       response_format: { type: 'json_object' },

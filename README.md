@@ -6,7 +6,7 @@
 
 Does your significant other spend thousands of dollars in his or her head every day? And tell you about all the things he or she wants to buy in great detail?
 
-Show your significant other how much all that junk costs simply by saying to the Infinity app what your significant other wants to buy, and getting an estimated price back. Keep track of all the things your significant other wants to buy, and see how much it costs in total.
+Show your significant other how much all that junk costs simply by saying to the Infinity app what your significant other wants to buy. The app uses LLMs to estimate the price of the item, and tracks all the spending requests in a database.
 
 ## Getting Started
 

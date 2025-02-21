@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { processWithLLM } from '@/utils/llmProcessor';
 import { StopIcon, MicrophoneIcon } from '@heroicons/react/24/solid';
+
+import { processWithLLM } from '@/utils/llmProcessor';
 
 interface VoiceRecorderProps {
   onItemConfirmed: (item: { name: string; price: number }) => void;

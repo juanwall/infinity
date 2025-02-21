@@ -83,13 +83,16 @@ export default function Home() {
 
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+      <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
           Infinity
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+        <h2 className="text-md text-gray-600 dark:text-gray-300 mb-12">
+          Cataloging your significant other's path to broke and fabulous!
+        </h2>
+        {/* <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
           Please sign {isSignUp ? 'up' : 'in'} to continue
-        </p>
+        </p> */}
         <AuthForm isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
       </div>
     );

@@ -8,7 +8,6 @@ interface Item {
 export default function SpreadsheetView({ items }: { items: Item[] }) {
   const totalItems = items.length;
   const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
-  const totalPriceWithTax = totalPrice * 1.0925; // Adding 9.25% tax
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this item?')) {
@@ -39,13 +38,6 @@ export default function SpreadsheetView({ items }: { items: Item[] }) {
         <p>
           Total Price:{' '}
           {totalPrice.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-          })}
-        </p>
-        <p>
-          Total Price (inc. 9.25% tax):{' '}
-          {totalPriceWithTax.toLocaleString('en-US', {
             style: 'currency',
             currency: 'USD',
           })}

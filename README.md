@@ -1,6 +1,6 @@
 # Infinity ♾️
 
-> Keep track of your significant other's spending requests with AI-estimated prices.
+> Keep track of your significant other's endless personal spending requests with AI-estimated prices.
 
 ## What is this?
 
@@ -12,9 +12,9 @@ Show your significant other how much all that junk costs simply by saying to the
 
 ### Supabase
 
-You'll need a (Supabase)[https://supabase.com] database. The free plan is more than enough for this app.
+You'll need a [Supabase](https://supabase.com) database. The free plan is more than enough for this app.
 
-You'll need to create a table called `shopping_items`. See `types/supabase.ts` for the schema. 
+You'll need to create a table called `shopping_items`. See `types/supabase.ts` for the schema.
 
 ### API keys
 

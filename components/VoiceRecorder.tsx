@@ -46,7 +46,6 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
 
           const { text } = await transcribeResponse.json();
 
-          console.log('Transcript:', text);
           setTranscript(text);
 
           // Process transcribed text with LLM
@@ -135,6 +134,13 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
           </button>
         )}
       </div>
+
+      {!isRecording && !isProcessing && (
+        <div className="text-center text-gray-600 dark:text-gray-300 text-sm">
+          Tell Infinity what your SO wants to buy. Say something like "Macbook
+          Pro."
+        </div>
+      )}
 
       {audioUrl && (
         <div className="flex justify-center">

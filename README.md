@@ -1,6 +1,6 @@
 # Infinity ♾️
 
-> Keep track of your significant other's endless personal spending requests with AI-estimated prices.
+> Cataloging your significant other's path to broke and fabulous!
 
 ## What is this?
 
@@ -15,6 +15,19 @@ Show your significant other how much all that junk costs simply by saying to the
 You'll need a [Supabase](https://supabase.com) database. The free plan is more than enough for this app.
 
 You'll need to create a table called `shopping_items`. See `types/supabase.ts` for the schema.
+
+Make sure to create a foreign key relation between `user_id` in the `shopping_items` table and `auth.users.id` table. In supabase, do this:
+
+1. Go to your Supabase project dashboard
+2. Click on "Table Editor" in the sidebar
+3. Select the shopping_items table
+4. Go to the "Foreign Keys" tab
+5. Click "Add Foreign Key"
+6. Set:
+   - Column: user_id
+   - Referenced Schema: auth
+   - Referenced Table: users
+   - Referenced Column: id
 
 ### API keys
 

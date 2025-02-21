@@ -6,6 +6,14 @@ export async function GET() {
   const supabase = await createClient();
 
   try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { data, error } = await supabase
       .from('shopping_items')
       .select('*')
@@ -30,6 +38,14 @@ export async function POST(request: Request) {
   const supabase = await createClient();
 
   try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { name, price } = body;
 
@@ -38,6 +54,7 @@ export async function POST(request: Request) {
         name,
         price,
         created_at: new Date().toISOString(),
+        user_id: user.id,
       },
     ]);
 

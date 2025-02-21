@@ -1,0 +1,135 @@
+'use client';
+
+import { createBrowserClient } from '@supabase/ssr';
+import { useRouter } from 'next/navigation';
+import { createContext, useContext, useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+
+const AuthContext = createContext<{
+  user: User | null;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  error: string | null;
+  message: string | null;
+  setMessage: (s: string | null) => void;
+  setError: (s: string | null) => void;
+  isAuthLoading: boolean;
+}>({
+  user: null,
+  signIn: async () => {},
+  signUp: async () => {},
+  signOut: async () => {},
+  error: null,
+  message: null,
+  setMessage: () => {},
+  setError: () => {},
+  isAuthLoading: true,
+});
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const router = useRouter();
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      setIsAuthLoading(false);
+      router.refresh();
+    });
+
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setIsAuthLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase, router]);
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      console.log('signing in 2000');
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    }
+  };
+
+  const signUp = async (email: string, password: string) => {
+    try {
+      setMessage(null);
+
+      const { error, data } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      console.log('data', data);
+      console.log('error', error);
+
+      if (error) throw error;
+
+      if (!data?.user?.user_metadata?.email_verified) {
+        console.log('email not verified');
+        setMessage('Please check your email for a verification link.');
+
+        return;
+      }
+
+      console.log('signing in 1000');
+
+      await signIn(email, password);
+
+      console.log('signed in');
+
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    }
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        signIn,
+        signUp,
+        signOut,
+        error,
+        message,
+        setMessage,
+        setError,
+        isAuthLoading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

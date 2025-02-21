@@ -52,35 +52,37 @@ export default function SpreadsheetView({ items }: { items: Item[] }) {
         </p>
       </div>
 
-      <table className="w-full border-collapse border">
-        <thead>
-          <tr>
-            <th className="border p-2">Date</th>
-            <th className="border p-2">Item</th>
-            <th className="border p-2">Price</th>
-            <th className="border p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.id}>
-              <td className="border p-2">
-                {new Date(item.created_at).toLocaleDateString()}
-              </td>
-              <td className="border p-2">{item.name}</td>
-              <td className="border p-2">${item.price.toFixed(2)}</td>
-              <td className="border p-2">
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border min-w-[640px]">
+          <thead>
+            <tr>
+              <th className="border p-2">Date</th>
+              <th className="border p-2">Item</th>
+              <th className="border p-2">Price</th>
+              <th className="border p-2">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <td className="border p-2">
+                  {new Date(item.created_at).toLocaleDateString()}
+                </td>
+                <td className="border p-2">{item.name}</td>
+                <td className="border p-2">${item.price.toFixed(2)}</td>
+                <td className="border p-2">
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

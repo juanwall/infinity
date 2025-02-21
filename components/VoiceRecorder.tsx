@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { processWithLLM } from "@/utils/llmProcessor";
+import { StopIcon, MicrophoneIcon } from "@heroicons/react/24/solid";
 
 interface VoiceRecorderProps {
   onItemConfirmed: (item: { name: string; price: number }) => void;
@@ -15,7 +16,7 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
     price: number;
   } | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isEditingPrice, setIsEditingPrice] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -86,67 +87,115 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
     }
     setCurrentItem(null);
     setTranscript("");
+    setAudioUrl(null);
+  };
+
+  const onReset = () => {
+    setTranscript("");
+    setAudioUrl(null);
   };
 
   return (
-    <div className="mb-8">
-      <button
-        className={`p-4 rounded-full ${isRecording ? "bg-red-500" : "bg-blue-500"} text-white mb-4`}
-        onMouseDown={startRecording}
-        onMouseUp={stopRecording}
-        onMouseLeave={stopRecording}
-        disabled={isProcessing}
-      >
-        {isRecording
-          ? "Recording..."
-          : isProcessing
-            ? "Processing..."
-            : "Hold to Record"}
-      </button>
+    <div className="space-y-4">
+      <div className="flex items-center justify-center gap-4">
+        <button
+          onClick={isRecording ? stopRecording : startRecording}
+          className={`
+            px-6 py-3 rounded-full font-medium text-white
+            transition-all duration-200 transform hover:scale-105
+            flex items-center gap-2
+            ${
+              isRecording
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }
+          `}
+        >
+          {isRecording ? (
+            <>
+              <StopIcon className="w-5 h-5" />
+              Stop Recording
+            </>
+          ) : (
+            <>
+              <MicrophoneIcon className="w-5 h-5" />
+              Start Recording
+            </>
+          )}
+        </button>
 
-      {transcript && <p className="mb-4">Transcript: {transcript}</p>}
+        {audioUrl && (
+          <button
+            onClick={onReset}
+            className="px-4 py-2 rounded-full text-gray-600 hover:text-gray-800 
+              dark:text-gray-300 dark:hover:text-white
+              transition-colors duration-200"
+          >
+            Reset
+          </button>
+        )}
+      </div>
 
-      {currentItem && (
-        <div className="mb-4">
+      {audioUrl && (
+        <div className="flex justify-center">
+          <audio
+            src={audioUrl}
+            controls
+            className="w-full max-w-md rounded-lg shadow"
+          />
+        </div>
+      )}
+
+      {isProcessing && (
+        <div className="text-center text-gray-600 dark:text-gray-300 flex items-center justify-center gap-2">
+          <div className="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent rounded-full" />
+          <span>Processing your recording...</span>
+        </div>
+      )}
+
+      {transcript && currentItem && (
+        <div className="mt-4 space-y-4">
           <p>Is this correct?</p>
-          <p>Item: {currentItem.name}</p>
           <div className="flex items-center gap-2">
-            <p>Price: $</p>
-            {isEditingPrice ? (
-              <input
-                type="number"
-                value={currentItem.price}
-                onChange={(e) =>
-                  setCurrentItem({
-                    ...currentItem,
-                    price: parseFloat(e.target.value) || 0,
-                  })
-                }
-                className="border rounded px-2 py-1 w-24"
-                autoFocus
-                onBlur={() => setIsEditingPrice(false)}
-              />
-            ) : (
-              <p
-                className="cursor-pointer"
-                onClick={() => setIsEditingPrice(true)}
-              >
-                {currentItem.price}
-              </p>
-            )}
+            <span>Item: </span>
+            <input
+              type="text"
+              value={currentItem.name}
+              onChange={(e) =>
+                setCurrentItem({
+                  ...currentItem,
+                  name: e.target.value,
+                })
+              }
+              className="border rounded px-2 py-2 w-48 bg-gray-800 text-white"
+            />
           </div>
-          <div className="flex gap-2 mt-2">
+          <div className="flex items-center gap-2">
+            <span>Price: $</span>
+            <input
+              type="number"
+              value={currentItem.price || ""}
+              onChange={(e) =>
+                setCurrentItem({
+                  ...currentItem,
+                  price: e.target.value === "" ? 0 : parseFloat(e.target.value),
+                })
+              }
+              className="border rounded px-2 py-2 w-24 bg-gray-800 text-white"
+            />
+          </div>
+          <div className="flex gap-2 mt-4">
             <button
               className="bg-green-500 text-white px-4 py-2 rounded"
               onClick={() => handleConfirmation(true)}
             >
-              Yes
+              Confirm
             </button>
             <button
               className="bg-red-500 text-white px-4 py-2 rounded"
               onClick={() => handleConfirmation(false)}
             >
-              No
+              Cancel
             </button>
           </div>
         </div>

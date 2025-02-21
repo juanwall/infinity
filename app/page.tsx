@@ -14,8 +14,6 @@ interface ShoppingItem {
 
 export default function Home() {
   const [items, setItems] = useState<ShoppingItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadItems();
@@ -23,9 +21,6 @@ export default function Home() {
 
   const loadItems = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
       const response = await fetch("/api/shopping-items");
       if (!response.ok) {
         throw new Error("Failed to fetch items");
@@ -35,15 +30,11 @@ export default function Home() {
       setItems(data);
     } catch (err) {
       console.error("Error loading items:", err);
-      setError(err instanceof Error ? err.message : "Failed to load items");
-    } finally {
-      setLoading(false);
     }
   };
 
   const addItem = async (item: { name: string; price: number }) => {
     try {
-      setError(null);
       const response = await fetch("/api/shopping-items", {
         method: "POST",
         headers: {
@@ -60,20 +51,27 @@ export default function Home() {
       setItems(data);
     } catch (err) {
       console.error("Error adding item:", err);
-      setError(err instanceof Error ? err.message : "Failed to add item");
     }
   };
 
   return (
-    <main className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Shopping List Voice Assistant</h1>
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-      <VoiceRecorder onItemConfirmed={addItem} />
-      {loading ? <div>Loading...</div> : <SpreadsheetView items={items} />}
-    </main>
+    <div className="space-y-8">
+      <header className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Project Infinity
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-300">
+          A grotesque display of consumerism
+        </p>
+      </header>
+
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <VoiceRecorder onItemConfirmed={addItem} />
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <SpreadsheetView items={items} />
+      </div>
+    </div>
   );
 }

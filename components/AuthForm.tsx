@@ -86,7 +86,7 @@ export default function AuthForm({ isSignUp, setIsSignUp }: AuthFormProps) {
         >
           {isSignUp
             ? 'Already have an account? Sign in'
-            : 'Need an account? Sign up'}
+            : `Need an account? Sign up (It's free! Yes, really.)`}
         </button>
       </div>
     </div>

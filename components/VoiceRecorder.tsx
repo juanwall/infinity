@@ -154,7 +154,7 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
             <>
               <div className="text-center text-gray-600 dark:text-gray-300 text-sm">
                 Tell Infinity what your SO wants to buy. Say something like
-                "Macbook Pro."
+                &quot;Macbook Pro.&quot;
               </div>
               <div className="text-center text-gray-600 dark:text-gray-300 text-xs">
                 <span className="italic mr-0.5">Or have your SO say it.</span>{' '}

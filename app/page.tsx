@@ -23,7 +23,7 @@ interface ShoppingItem {
 }
 
 export default function Home() {
-  const { user, signOut, isAuthLoading } = useAuth();
+  const { user, isAuthLoading } = useAuth();
   const [items, setItems] = useState<ShoppingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -95,15 +95,16 @@ export default function Home() {
           className={`${quicksand.className} text-xl md:text-2xl text-center font-semibold mb-10`}
         >
           <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient">
-            Cataloging your significant other&apos;s path
-            <br /> to Broke
+            When their cart says &quot;YOLO,&quot; but your bank says &quot;LOL
+            Nope!&quot;
           </span>
-          {' 🤑 '}
-          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient">
-            and Fabulous!
+          {' 🛍️💸 '}
+          <br />
+          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient text-sm">
+            Living their best life, one declined transaction at a time.
           </span>
-          {' 💎🛍️'}
         </h2>
+
         <AuthForm isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
       </div>
     );

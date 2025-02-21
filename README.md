@@ -10,6 +10,12 @@ Show your significant other how much all that junk costs simply by saying to the
 
 ## Getting Started
 
+### Supabase
+
+You'll need a (Supabase)[https://supabase.com] database. The free plan is more than enough for this app.
+
+You'll need to create a table called `shopping_items`. See `types/supabase.ts` for the schema. 
+
 ### API keys
 
 You need to create a `.env.local` file in the root of the project and add the following keys:

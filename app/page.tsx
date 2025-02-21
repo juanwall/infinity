@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import VoiceRecorder from "@/components/VoiceRecorder";
-import SpreadsheetView from "@/components/SpreadsheetView";
+import { useState, useEffect } from 'react';
+import VoiceRecorder from '@/components/VoiceRecorder';
+import SpreadsheetView from '@/components/SpreadsheetView';
 
 // Define an interface for the shopping items
 interface ShoppingItem {
@@ -21,36 +21,36 @@ export default function Home() {
 
   const loadItems = async () => {
     try {
-      const response = await fetch("/api/shopping-items");
+      const response = await fetch('/api/shopping-items');
       if (!response.ok) {
-        throw new Error("Failed to fetch items");
+        throw new Error('Failed to fetch items');
       }
 
       const data = await response.json();
       setItems(data);
     } catch (err) {
-      console.error("Error loading items:", err);
+      console.error('Error loading items:', err);
     }
   };
 
   const addItem = async (item: { name: string; price: number }) => {
     try {
-      const response = await fetch("/api/shopping-items", {
-        method: "POST",
+      const response = await fetch('/api/shopping-items', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(item),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add item");
+        throw new Error('Failed to add item');
       }
 
       const data = await response.json();
       setItems(data);
     } catch (err) {
-      console.error("Error adding item:", err);
+      console.error('Error adding item:', err);
     }
   };
 

@@ -1,36 +1,35 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
-import type { Database } from "@/types/supabase";
+import { NextResponse } from 'next/server';
+
+import { createClient } from '@/utils/api';
+
+interface IDeleteParams {
+  id: string;
+}
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } },
+  _request: Request,
+  { params }: { params: Promise<IDeleteParams> },
 ) {
-  const supabase = createRouteHandlerClient<Database>(
-    { cookies },
-    {
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseKey: process.env.SUPABASE_ANON_KEY,
-    },
-  );
+  const { id } = await params;
+
+  const supabase = await createClient();
 
   try {
     const { error } = await supabase
-      .from("shopping_items")
+      .from('shopping_items')
       .delete()
-      .eq("id", params.id);
+      .eq('id', id);
 
     if (error) {
-      console.error("Error deleting item:", error);
+      console.error('Error deleting item:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ message: "Item deleted successfully" });
+    return NextResponse.json({ message: 'Item deleted successfully' });
   } catch (error) {
-    console.error("Error in DELETE /api/items/[id]:", error);
+    console.error('Error in DELETE /api/items/[id]:', error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 },
     );
   }

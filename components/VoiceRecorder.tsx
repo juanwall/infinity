@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import { processWithLLM } from "@/utils/llmProcessor";
-import { StopIcon, MicrophoneIcon } from "@heroicons/react/24/solid";
+import { useState, useRef } from 'react';
+import { processWithLLM } from '@/utils/llmProcessor';
+import { StopIcon, MicrophoneIcon } from '@heroicons/react/24/solid';
 
 interface VoiceRecorderProps {
   onItemConfirmed: (item: { name: string; price: number }) => void;
@@ -10,7 +10,7 @@ interface VoiceRecorderProps {
 
 export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const [transcript, setTranscript] = useState('');
   const [currentItem, setCurrentItem] = useState<{
     name: string;
     price: number;
@@ -30,30 +30,30 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
       mediaRecorderRef.current.ondataavailable = (e) =>
         chunksRef.current.push(e.data);
       mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
         setIsProcessing(true);
 
         // Create form data for the audio file
         const formData = new FormData();
-        formData.append("audio", audioBlob, "recording.webm");
+        formData.append('audio', audioBlob, 'recording.webm');
 
         try {
           // Send audio for transcription
-          const transcribeResponse = await fetch("/api/transcribe", {
-            method: "POST",
+          const transcribeResponse = await fetch('/api/transcribe', {
+            method: 'POST',
             body: formData,
           });
 
           const { text } = await transcribeResponse.json();
 
-          console.log("Transcript:", text);
+          console.log('Transcript:', text);
           setTranscript(text);
 
           // Process transcribed text with LLM
           const result = await processWithLLM(text);
           setCurrentItem(result);
         } catch (error) {
-          console.error("Error processing audio:", error);
+          console.error('Error processing audio:', error);
         } finally {
           setIsProcessing(false);
         }
@@ -62,14 +62,14 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
       mediaRecorderRef.current.start();
       setIsRecording(true);
     } catch (err) {
-      console.error("Error accessing microphone:", err);
+      console.error('Error accessing microphone:', err);
     }
   };
 
   const stopRecording = () => {
     if (
       mediaRecorderRef.current &&
-      mediaRecorderRef.current.state === "recording"
+      mediaRecorderRef.current.state === 'recording'
     ) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
@@ -86,12 +86,12 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
       onItemConfirmed(currentItem);
     }
     setCurrentItem(null);
-    setTranscript("");
+    setTranscript('');
     setAudioUrl(null);
   };
 
   const onReset = () => {
-    setTranscript("");
+    setTranscript('');
     setAudioUrl(null);
   };
 
@@ -106,8 +106,8 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
             flex items-center gap-2
             ${
               isRecording
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-blue-500 hover:bg-blue-600"
+                ? 'bg-red-500 hover:bg-red-600'
+                : 'bg-blue-500 hover:bg-blue-600'
             }
           `}
         >
@@ -174,11 +174,11 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
             <span>Price: $</span>
             <input
               type="number"
-              value={currentItem.price || ""}
+              value={currentItem.price || ''}
               onChange={(e) =>
                 setCurrentItem({
                   ...currentItem,
-                  price: e.target.value === "" ? 0 : parseFloat(e.target.value),
+                  price: e.target.value === '' ? 0 : parseFloat(e.target.value),
                 })
               }
               className="border rounded px-2 py-2 w-24 bg-gray-800 text-white"

@@ -11,24 +11,24 @@ export default function SpreadsheetView({ items }: { items: Item[] }) {
   const totalPriceWithTax = totalPrice * 1.0925; // Adding 9.25% tax
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this item?")) {
+    if (!confirm('Are you sure you want to delete this item?')) {
       return;
     }
 
     try {
       const response = await fetch(`/api/items/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete item");
+        throw new Error('Failed to delete item');
       }
 
       // Refresh the page to show updated data
       window.location.reload();
     } catch (error) {
-      console.error("Error deleting item:", error);
-      alert("Failed to delete item");
+      console.error('Error deleting item:', error);
+      alert('Failed to delete item');
     }
   };
 
@@ -37,17 +37,17 @@ export default function SpreadsheetView({ items }: { items: Item[] }) {
       <div className="mb-4">
         <p>Total Items: {totalItems}</p>
         <p>
-          Total Price:{" "}
-          {totalPrice.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
+          Total Price:{' '}
+          {totalPrice.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
           })}
         </p>
         <p>
-          Total Price (inc. 9.25% tax):{" "}
-          {totalPriceWithTax.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
+          Total Price (inc. 9.25% tax):{' '}
+          {totalPriceWithTax.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
           })}
         </p>
       </div>

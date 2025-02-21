@@ -30,13 +30,13 @@ export default function Home() {
   const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       loadItems();
     } else {
       setItems([]);
       setIsLoading(false);
     }
-  }, [user]); // Only run when user changes
+  }, [user?.id]); // Only run when user changes
 
   const loadItems = async () => {
     try {

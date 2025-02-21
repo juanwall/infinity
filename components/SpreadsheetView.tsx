@@ -83,7 +83,12 @@ export default function SpreadsheetView({ items }: { items: Item[] }) {
                     {new Date(item.created_at).toLocaleDateString()}
                   </td>
                   <td className="border p-2">{item.name}</td>
-                  <td className="border p-2">${item.price.toFixed(2)}</td>
+                  <td className="border p-2">
+                    {item.price.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                    })}
+                  </td>
                   <td className="border p-2">
                     <button
                       onClick={() => handleDelete(item.id)}

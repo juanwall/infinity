@@ -8,7 +8,11 @@ import type { User } from '@supabase/supabase-js';
 const AuthContext = createContext<{
   user: User | null;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    captchaToken: string,
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   error: string | null;
   message: string | null;
@@ -61,8 +65,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('signing in 2000');
-
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -74,32 +76,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    captchaToken: string,
+  ) => {
     try {
       setMessage(null);
 
       const { error, data } = await supabase.auth.signUp({
         email,
         password,
+        ...(process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY
+          ? {
+              options: {
+                captchaToken,
+              },
+            }
+          : {}),
       });
-
-      console.log('data', data);
-      console.log('error', error);
 
       if (error) throw error;
 
       if (!data?.user?.user_metadata?.email_verified) {
-        console.log('email not verified');
         setMessage('Please check your email for a verification link.');
 
         return;
       }
 
-      console.log('signing in 1000');
-
       await signIn(email, password);
-
-      console.log('signed in');
 
       setError(null);
     } catch (err) {

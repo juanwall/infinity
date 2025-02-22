@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
+
 import { useAuth } from './AuthProvider';
 
 interface AuthFormProps {
@@ -11,12 +13,19 @@ interface AuthFormProps {
 export default function AuthForm({ isSignUp, setIsSignUp }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+
   const { signIn, signUp, error, message, setMessage, setError } = useAuth();
+  const captcha = useRef<HCaptcha>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSignUp) {
-      await signUp(email, password);
+      await signUp(email, password, captchaToken);
+
+      if (process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY) {
+        captcha.current?.resetCaptcha();
+      }
     } else {
       await signIn(email, password);
     }
@@ -65,6 +74,18 @@ export default function AuthForm({ isSignUp, setIsSignUp }: AuthFormProps) {
         {message && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded my-4">
             {message}
+          </div>
+        )}
+
+        {isSignUp && !!process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY && (
+          <div className="flex justify-center">
+            <HCaptcha
+              ref={captcha}
+              sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY || ''}
+              onVerify={(token) => {
+                setCaptchaToken(token);
+              }}
+            />
           </div>
         )}
 

@@ -61,6 +61,8 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
         'audio/aac',
         'audio/m4a',
         'audio/mpeg',
+        'audio/flac',
+        'audio/mp4',
       ];
 
       let mimeType = null;

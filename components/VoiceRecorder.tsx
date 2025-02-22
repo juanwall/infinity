@@ -196,13 +196,16 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
     originalMimeType: string,
   ): Promise<Blob> => {
     try {
-      // If already WebM, return as-is
       if (originalMimeType === 'audio/webm') {
         return audioBlob;
       }
 
-      const audioContext = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
+      interface WebKitWindow extends Window {
+        webkitAudioContext: typeof AudioContext;
+      }
+
+      const audioContext = new (window.AudioContext || 
+        (window as unknown as WebKitWindow).webkitAudioContext)();
       const arrayBuffer = await audioBlob.arrayBuffer();
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       const destination = audioContext.createMediaStreamDestination();

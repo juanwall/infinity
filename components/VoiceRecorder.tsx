@@ -102,6 +102,7 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
           mediaRecorderRef.current?.mimeType.split('/')[1] || 'webm'
         ).split(';')[0];
         formData.append('audio', audioBlob, `recording.${extension}`);
+        formData.append('mimeType', mimeType);
 
         try {
           // Send audio for transcription

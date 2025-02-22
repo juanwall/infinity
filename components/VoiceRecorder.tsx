@@ -300,7 +300,7 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
           </div>
         )}
       </div>
-      
+
       <ErrorModal
         isOpen={showError}
         onClose={() => setShowError(false)}

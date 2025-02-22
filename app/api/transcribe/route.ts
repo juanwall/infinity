@@ -28,9 +28,13 @@ export async function POST(req: Request) {
       );
     }
 
+    console.log('Received audio file type:', audioFile.type); // Debug log
+
+    // Convert audio to proper format if needed
     const transcription = await openai.audio.transcriptions.create({
       file: audioFile,
       model: 'whisper-1',
+      response_format: 'json',
     });
 
     console.log('Transcription:', transcription.text);
@@ -39,7 +43,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('Transcription error:', error);
     return NextResponse.json(
-      { error: 'Error processing audio' },
+      { error: 'Error processing audio: ' + (error as Error).message },
       { status: 500 },
     );
   }

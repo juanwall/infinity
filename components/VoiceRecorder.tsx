@@ -25,22 +25,44 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
 
   const startRecording = async () => {
     try {
+      // First check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error('Media devices API not supported');
+        alert('Audio recording is not supported in your browser');
+        return;
+      }
+
+      // Check if MediaRecorder is supported
+      if (typeof MediaRecorder === 'undefined') {
+        console.error('MediaRecorder not supported');
+        alert('Audio recording is not supported in your browser');
+        return;
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
+          // Simplified constraints for better iOS compatibility
           echoCancellation: true,
           noiseSuppression: true,
-          sampleRate: 44100,
         },
       });
 
-      // Determine supported MIME type
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm')
-        ? 'audio/webm'
-        : 'audio/mp4';
+      // Try different MIME types for iOS
+      let mimeType = 'audio/mp4';
+      if (MediaRecorder.isTypeSupported('audio/webm')) {
+        mimeType = 'audio/webm';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        mimeType = 'audio/mp4';
+      } else if (MediaRecorder.isTypeSupported('audio/aac')) {
+        mimeType = 'audio/aac';
+      } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+        mimeType = 'audio/ogg';
+      }
+
+      console.log('Using MIME type:', mimeType); // Debug log
 
       mediaRecorderRef.current = new MediaRecorder(stream, {
         mimeType,
-        audioBitsPerSecond: 128000,
       });
       chunksRef.current = [];
 
@@ -88,27 +110,34 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
       }, 10000); // 10 seconds
     } catch (err) {
       console.error('Error accessing microphone:', err);
+      alert(
+        'Failed to access microphone. Please ensure you have granted microphone permissions.',
+      );
     }
   };
 
   const stopRecording = () => {
-    // Clear the timeout if stopping manually
-    if (recordingTimeoutRef.current) {
-      clearTimeout(recordingTimeoutRef.current);
-      recordingTimeoutRef.current = null;
-    }
+    try {
+      // Clear the timeout if stopping manually
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+        recordingTimeoutRef.current = null;
+      }
 
-    if (
-      mediaRecorderRef.current &&
-      mediaRecorderRef.current.state === 'recording'
-    ) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state === 'recording'
+      ) {
+        mediaRecorderRef.current.stop();
+        setIsRecording(false);
 
-      // Stop all tracks in the stream
-      mediaRecorderRef.current.stream
-        .getTracks()
-        .forEach((track) => track.stop());
+        // Stop all tracks in the stream
+        mediaRecorderRef.current.stream
+          .getTracks()
+          .forEach((track) => track.stop());
+      }
+    } catch (err) {
+      console.error('Error stopping recording:', err);
     }
   };
 

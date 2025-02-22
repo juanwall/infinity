@@ -2,7 +2,9 @@
 
 > Cataloging your significant other's path to broke and fabulous!
 
-Help keep the demo running (and help me pay for stuff on my wife's Infinity list!)
+**[✨ Try it out at www.infinity.gripe! ✨](https://www.infinity.gripe)**
+
+Help keep the hosted site running (and help me pay for stuff on my wife's Infinity list!)
 
 [![Donate with Crypto](https://img.shields.io/badge/Donate-with%20Crypto-orange?logo=bitcoin&style=for-the-badge)](https://commerce.coinbase.com/checkout/ed154b65-c8c6-429a-a859-07dc359859fa)
 

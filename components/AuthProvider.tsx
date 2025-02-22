@@ -83,17 +83,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   ) => {
     try {
       setMessage(null);
+      setError(null);
 
       const { error, data } = await supabase.auth.signUp({
         email,
         password,
-        ...(process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY
-          ? {
-              options: {
-                captchaToken,
-              },
-            }
-          : {}),
+        options: {
+          ...(process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY
+            ? { captchaToken }
+            : {}),
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
 
       if (error) throw error;

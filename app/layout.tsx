@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
+import { Analytics } from '@vercel/analytics/react';
 
 import './globals.css';
 import { AuthProvider } from '@/components/AuthProvider';
@@ -66,6 +67,8 @@ export default function RootLayout({
             </Link>
           </footer>
         </AuthProvider>
+
+        <Analytics />
       </body>
     </html>
   );

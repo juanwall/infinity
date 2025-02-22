@@ -25,19 +25,38 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100,
+        },
+      });
+
+      // Determine supported MIME type
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm')
+        ? 'audio/webm'
+        : 'audio/mp4';
+
+      mediaRecorderRef.current = new MediaRecorder(stream, {
+        mimeType,
+        audioBitsPerSecond: 128000,
+      });
       chunksRef.current = [];
 
       mediaRecorderRef.current.ondataavailable = (e) =>
         chunksRef.current.push(e.data);
       mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(chunksRef.current, { type: mimeType });
         setIsProcessing(true);
 
         // Create form data for the audio file
         const formData = new FormData();
-        formData.append('audio', audioBlob, 'recording.webm');
+        formData.append(
+          'audio',
+          audioBlob,
+          `recording.${mimeType.split('/')[1]}`,
+        );
 
         try {
           // Send audio for transcription

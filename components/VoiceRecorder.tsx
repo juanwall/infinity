@@ -52,21 +52,32 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
         },
       });
 
-      // Prioritize webm as it's well-supported by Whisper
-      let mimeType = 'audio/webm';
-      if (!MediaRecorder.isTypeSupported('audio/webm')) {
-        if (MediaRecorder.isTypeSupported('audio/mp3')) {
-          mimeType = 'audio/mp3';
-        } else if (MediaRecorder.isTypeSupported('audio/wav')) {
-          mimeType = 'audio/wav';
-        } else {
-          console.error('No supported audio format found');
-          setErrorMessage(
-            'Your browser does not support any compatible audio formats',
-          );
-          setShowError(true);
-          return;
+      // Try formats in order of preference for both browser and Whisper compatibility
+      const preferredFormats = [
+        'audio/webm',
+        'audio/mp3',
+        'audio/ogg',
+        'audio/wav',
+        'audio/aac',
+        'audio/m4a',
+        'audio/mpeg',
+      ];
+
+      let mimeType = null;
+      for (const format of preferredFormats) {
+        if (MediaRecorder.isTypeSupported(format)) {
+          mimeType = format;
+          break;
         }
+      }
+
+      if (!mimeType) {
+        console.error('No supported audio format found');
+        setErrorMessage(
+          'Your browser does not support any compatible audio formats',
+        );
+        setShowError(true);
+        return;
       }
 
       mediaRecorderRef.current = new MediaRecorder(stream, {

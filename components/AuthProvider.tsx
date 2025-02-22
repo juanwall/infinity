@@ -85,13 +85,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setMessage(null);
       setError(null);
 
+      console.log('origin:', window.location.origin);
+
       const { error, data } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          ...(process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY
-            ? { captchaToken }
-            : {}),
+          ...(process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY ? { captchaToken } : {}),
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
@@ -99,7 +99,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
 
       if (!data?.user?.user_metadata?.email_verified) {
-        setMessage('Please check your email for a verification link.');
+        setMessage(
+          'Please check your email for a verification link. You may need to check your spam folder.',
+        );
 
         return;
       }

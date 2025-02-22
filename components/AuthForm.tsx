@@ -22,12 +22,12 @@ export default function AuthForm({ isSignUp, setIsSignUp }: AuthFormProps) {
     e.preventDefault();
     if (isSignUp) {
       await signUp(email, password, captchaToken);
-
-      if (process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY) {
-        captcha.current?.resetCaptcha();
-      }
     } else {
-      await signIn(email, password);
+      await signIn(email, password, captchaToken);
+    }
+
+    if (process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY) {
+      captcha.current?.resetCaptcha();
     }
   };
 
@@ -77,7 +77,7 @@ export default function AuthForm({ isSignUp, setIsSignUp }: AuthFormProps) {
           </div>
         )}
 
-        {isSignUp && !!process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY && (
+        {!!process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY && (
           <div className="flex justify-center">
             <HCaptcha
               ref={captcha}

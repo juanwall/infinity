@@ -7,7 +7,11 @@ import type { User } from '@supabase/supabase-js';
 
 const AuthContext = createContext<{
   user: User | null;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (
+    email: string,
+    password: string,
+    captchaToken: string,
+  ) => Promise<void>;
   signUp: (
     email: string,
     password: string,
@@ -63,11 +67,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [supabase, router]);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (
+    email: string,
+    password: string,
+    captchaToken: string,
+  ) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          ...(process.env.NEXT_PUBLIC_HCAPTCHA_SITEKEY ? { captchaToken } : {}),
+        },
       });
       if (error) throw error;
       setError(null);
@@ -84,8 +95,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setMessage(null);
       setError(null);
-
-      console.log('origin:', window.location.origin);
 
       const { error, data } = await supabase.auth.signUp({
         email,
@@ -106,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      await signIn(email, password);
+      await signIn(email, password, captchaToken);
 
       setError(null);
     } catch (err) {

@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { StopIcon, MicrophoneIcon } from '@heroicons/react/24/solid';
 
 import { processWithLLM } from '@/utils/llmProcessor';
-import ErrorModal from './modals/error';
+import ErrorModal from '@/components/modals/error';
 
 interface VoiceRecorderProps {
   onItemConfirmed: (item: { name: string; price: number }) => void;
@@ -96,15 +96,17 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
         });
         setIsProcessing(true);
 
-        // Create form data for the audio file
-        const formData = new FormData();
-        const extension = (
-          mediaRecorderRef.current?.mimeType.split('/')[1] || 'webm'
-        ).split(';')[0];
-        formData.append('audio', audioBlob, `recording.${extension}`);
-        formData.append('mimeType', mimeType);
-
         try {
+          // Convert to WebM if needed
+          const webmBlob = await convertToWebM(
+            audioBlob,
+            mediaRecorderRef.current?.mimeType || '',
+          );
+
+          // Create form data for the audio file
+          const formData = new FormData();
+          formData.append('audio', webmBlob, 'recording.webm');
+
           // Send audio for transcription
           const transcribeResponse = await fetch('/api/transcribe', {
             method: 'POST',
@@ -187,6 +189,61 @@ export default function VoiceRecorder({ onItemConfirmed }: VoiceRecorderProps) {
   const onReset = () => {
     setTranscript('');
     setAudioUrl(null);
+  };
+
+  const convertToWebM = async (
+    audioBlob: Blob,
+    originalMimeType: string,
+  ): Promise<Blob> => {
+    try {
+      // If already WebM, return as-is
+      if (originalMimeType === 'audio/webm') {
+        return audioBlob;
+      }
+
+      const audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
+      const arrayBuffer = await audioBlob.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      const destination = audioContext.createMediaStreamDestination();
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(destination);
+
+      const mediaRecorder = new MediaRecorder(destination.stream, {
+        mimeType: 'audio/webm;codecs=opus',
+      });
+
+      const chunks: Blob[] = [];
+      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+
+      mediaRecorder.start();
+      source.start(0);
+
+      await new Promise<void>((resolve) => {
+        source.onended = () => {
+          mediaRecorder.stop();
+          resolve();
+        };
+      });
+
+      return new Promise((resolve, reject) => {
+        mediaRecorder.onstop = () => {
+          try {
+            const webmBlob = new Blob(chunks, { type: 'audio/webm' });
+            resolve(webmBlob);
+          } catch (error) {
+            reject(new Error('Failed to create WebM blob: ' + error));
+          }
+        };
+
+        mediaRecorder.onerror = (event) => {
+          reject(new Error('MediaRecorder error: ' + event.error));
+        };
+      });
+    } catch (error) {
+      throw new Error('Audio conversion failed: ' + error);
+    }
   };
 
   return (

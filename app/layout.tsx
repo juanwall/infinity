@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata = {
   title: 'Infinity',
   description:
-    "Cataloging your significant other's path to broke and fabulous!",
+    "Love's Wishlist vs. Your Bank. Spoiler: the wishlist is winning.",
   icons: {
     icon: '/favicon.ico',
   },

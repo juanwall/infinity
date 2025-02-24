@@ -1,6 +1,6 @@
 # Infinity ♾️
 
-> Cataloging your significant other's path to broke and fabulous!
+> Love's Wishlist vs. Your Bank. Spoiler: the wishlist is winning.
 
 **[✨ Try it out at www.infinity.gripe! ✨](https://www.infinity.gripe)**
 

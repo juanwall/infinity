@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Quicksand } from 'next/font/google';
 
 import VoiceRecorder from '@/components/VoiceRecorder';
 import SpreadsheetView from '@/components/SpreadsheetView';
 import { useAuth } from '@/components/AuthProvider';
 import AuthForm from '@/components/AuthForm';
-import { Quicksand } from 'next/font/google';
 
 const quicksand = Quicksand({
   subsets: ['latin'],
@@ -92,17 +92,14 @@ export default function Home() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh]">
         <h2
-          className={`${quicksand.className} text-xl md:text-2xl text-center font-semibold mb-10`}
+          className={`${quicksand.className} text-xl md:text-2xl text-center font-semibold mb-10 mt-0 lg:mt-20`}
         >
-          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient">
-            When their cart says &quot;YOLO,&quot; but your bank says &quot;LOL
-            Nope!&quot;
-          </span>
-          {' 🛍️💸 '}
-          <br />
-          <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient text-sm">
-            Living their best life, one declined transaction at a time.
-          </span>
+          <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient">
+            Love's Wishlist vs. Your Bank
+          </div>
+          <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient text-sm">
+            Spoiler: the wishlist is winning.
+          </div>
         </h2>
 
         <AuthForm isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
@@ -124,7 +121,7 @@ export default function Home() {
         ) : error ? (
           <div className="text-red-500 text-center py-4">{error}</div>
         ) : (
-          <SpreadsheetView items={items} />
+          <SpreadsheetView items={items} loadItems={loadItems} />
         )}
       </div>
     </div>

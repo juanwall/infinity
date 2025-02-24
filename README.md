@@ -45,6 +45,14 @@ SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
+If you want to support Safari on iOS and other browsers that don't support WebM audio recording, you'll need to create a Cloudinary account and add the following keys:
+
+```
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
+
 ### Running the app
 
 First, run the development server:

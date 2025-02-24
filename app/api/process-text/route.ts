@@ -1,5 +1,6 @@
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@/utils/api';
 
 const openai = new OpenAI({
@@ -25,12 +26,12 @@ export async function POST(req: Request) {
     }
 
     const completion = await openai.chat.completions.create({
-      model: 'o3-mini',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
           content:
-            "You are a helpful assistant that extracts shopping items and their prices from text. You should estimate the price in USD based on the item name. Return only a JSON object with 'name' and 'price' properties.",
+            "You are a helpful assistant that extracts shopping items and their prices from text. You should estimate the price in USD based on the item name. Return only a JSON object with 'name' and 'price' properties. In the name you return, capitalize the first letter of each word where appropriate.",
         },
         {
           role: 'user',
@@ -40,8 +41,10 @@ export async function POST(req: Request) {
       response_format: { type: 'json_object' },
     });
 
+    console.log('completion', completion?.choices[0].message.content);
+
     return NextResponse.json(
-      JSON.parse(completion.choices[0].message.content || '{}'),
+      JSON.parse(completion?.choices[0]?.message?.content || '{}'),
     );
   } catch (error) {
     console.error('Error in POST /api/process-text:', error);

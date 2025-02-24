@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+
 import ErrorModal from '@/components/modals/error';
 
 interface Item {
@@ -15,7 +16,15 @@ interface Item {
   created_at: string;
 }
 
-export default function SpreadsheetView({ items }: { items: Item[] }) {
+interface ISpreadsheetViewProps {
+  items: Item[];
+  loadItems: () => Promise<void>;
+}
+
+export default function SpreadsheetView({
+  items,
+  loadItems,
+}: ISpreadsheetViewProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   const [showError, setShowError] = useState(false);
@@ -41,8 +50,8 @@ export default function SpreadsheetView({ items }: { items: Item[] }) {
         throw new Error('Failed to delete item');
       }
 
+      await loadItems();
       setIsModalOpen(false);
-      window.location.reload();
     } catch (error) {
       console.error('Error deleting item:', error);
       setErrorMessage('Failed to delete item');

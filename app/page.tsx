@@ -95,7 +95,7 @@ export default function Home() {
           className={`${quicksand.className} text-xl md:text-2xl text-center font-semibold mb-10 mt-0 lg:mt-20`}
         >
           <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient">
-            Love's Wishlist vs. Your Bank
+            Love&apos;s Wishlist vs. Your Bank
           </div>
           <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent animate-gradient text-sm">
             Spoiler: the wishlist is winning.

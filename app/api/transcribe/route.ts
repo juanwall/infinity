@@ -15,6 +15,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+interface ICloudinaryUploadResponse {
+  secure_url: string;
+  public_id: string;
+}
+
 export async function POST(req: Request) {
   const supabase = await createClient();
 
@@ -78,27 +83,29 @@ const convertToWebm = async (file: File): Promise<File> => {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const uploadResponse = await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            resource_type: 'video',
-            format: 'webm',
-            audio_codec: 'opus',
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          },
-        )
-        .end(buffer);
-    });
+    const uploadResponse = await new Promise<ICloudinaryUploadResponse>(
+      (resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              resource_type: 'video',
+              format: 'webm',
+              audio_codec: 'opus',
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result as ICloudinaryUploadResponse);
+            },
+          )
+          .end(buffer);
+      },
+    );
 
-    const webmResponse = await fetch((uploadResponse as any).secure_url);
+    const webmResponse = await fetch(uploadResponse.secure_url);
     const webmBlob = await webmResponse.blob();
     const webmFile = new File([webmBlob], 'audio.webm', { type: 'audio/webm' });
 
-    await cloudinary.uploader.destroy((uploadResponse as any).public_id, {
+    await cloudinary.uploader.destroy(uploadResponse.public_id, {
       resource_type: 'video',
     });
 
